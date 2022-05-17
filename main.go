@@ -33,6 +33,12 @@ func siteConcurrent(urls []string) {
 		wg.Wait()
 	}
 }
+
+func greet(ch chan<-string) {
+	fmt.Println("Greeter ready!")
+	ch <- "Hello World!"
+	fmt.Println("Greeter completed!")
+}
 func main() {
 	urls := []string {
 		"https://golang.org",
@@ -45,5 +51,19 @@ func main() {
 	startConcurrent := time.Now()
 	siteConcurrent(urls)
 	fmt.Println(time.Since(startConcurrent))
+
+	//create a channel
+	ch := make(chan string, 1)
+	//start the geater
+	go greet(ch)
+	//sleep for a long time
+	time.Sleep(5 * time.Second)
+	fmt.Println("Main ready!")
+	//receive greeting
+	greeting := <-ch
+	//sleep for a long time
+	time.Sleep(2 * time.Second)
+	fmt.Println("Greeting received!")
+	fmt.Println(greeting)
 
 }
